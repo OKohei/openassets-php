@@ -11,13 +11,13 @@
   ],
   "autoload": {
     "psr-4": {
-      "BitWasp\\Bitcoin\\": "src/"
+      "OKohei\\OpenAssets\\": "src/"
     },
     "files": ["src/Script/functions.php"]
   },
   "autoload-dev": {
     "psr-4": {
-      "BitWasp\\Bitcoin\\Tests\\": "tests/"
+      "OKohei\\OpenAssets\\Tests\\": "tests/"
     }
   },
   "require": {
