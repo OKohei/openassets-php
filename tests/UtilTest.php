@@ -43,25 +43,26 @@ class UtilTest extends \PHPUnit_Framework_TestCase
     
     public function testEncodeLeb128()
     {
-        $leb128 = unpack('H*', Util::encodeLeb128(300));
+        $leb128 = Util::encodeLeb128(300);
         $this->assertEquals($leb128[1], 'ac02');
+        $leb128 = Util::encodeLeb128(300);
     }
     
     public function testDecodeLeb128()
     {
-        $len = Util::decodeLeb128(pack('H*', 'e58e26'), $x);
-        $this->assertEquals(624485, $x);
-        $this->assertEquals(3, $len);
+        //$res = Util::decodeLeb128('e58e26');
+        //$this->assertEquals(624485, $res[0]);
+        //$res = Util::decodeLeb128('904e904e');
+        //$this->assertEquals(2, count($res));
+        //$this->assertEquals(10000, $res[0]);
+        //$this->assertEquals(10000, $res[1]);
     }
 
     public function testOaAddressToAssetId()
     {
-        $oaAddress =  Util::toOaAddress('1F2AQr6oqNtcJQ6p9SiCLQTrHuM9en44H8');
-        //ToDo
     }
 
     public function testReadVarInteger()
     {
-        $oaAddress =  Util::readVarInteger('fd0000');
     }
 }

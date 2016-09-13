@@ -2,10 +2,19 @@
 
 namespace OKohei\OpenAssets;
 
+use TheFox\Utilities\Leb128;
 use BitWasp\Bitcoin\Bitcoin;
 use BitWasp\Bitcoin\Base58;
 use BitWasp\Buffertools\Buffer;
 use BitWasp\Bitcoin\Crypto\Hash;
+use BitWasp\Bitcoin\Script\Classifier\OutputClassifier;
+use BitWasp\Bitcoin\Script\ScriptInfo\PayToPubkey;
+use BitWasp\Bitcoin\Address\AddressFactory;
+use BitWasp\Bitcoin\Script\ScriptInfo\Multisig;
+use BitWasp\Bitcoin\Script\ScriptInfo\PayToPubkeyHash;
+use BitWasp\Bitcoin\Script\Factory\P2shScriptFactory;
+use BitWasp\Bitcoin\Script\P2shScript;
+use BitWasp\Bitcoin\Key\PublicKeyFactory;
 
 class Util 
 {   
@@ -70,32 +79,28 @@ class Util
             $str .= chr($char);
         } while ($x);
         
-        return $str;
+        return unpack('H*', $str);
     }
 
-    public static function decodeLeb128($str, &$x, $maxlen = 16)
+    public static function decodeLeb128($leb128)
     {
-        $len = 0;
-        $x = 0;
-        while($str){
-            $char = substr($str, 0, 1);
-            $char = ord($char);
-            $str = substr($str, 1);
-            
-            $x |= ($char & 0x7f) << (7 * $len);
-            $len++;
-            
-            #Bin::debugInt($char);
-            
-            if(($char & 0x80) == 0){
-                break;
+        $base = null;
+        $bytes = str_split($leb128, 2);
+        $numItems = count($bytes);
+        $i = 0;
+        foreach($bytes as $byte) {
+            if (++$i !== $numItems) {
+                $base .= Buffer::hex($byte)->getInt() >= 128 ? $byte : $byte.'|';
+            } else {
+                $base .= $byte;
             }
-            
-            if($len >= $maxlen){
-                throw new RuntimeException('Max length '.$maxlen.' reached.', 20);
-            }
+        };
+        $data = explode('|', $base);
+        foreach ($data as $str) {
+            $len = Leb128::udecode(pack('H*', $str), $x);
+            $res[] = $x;
         }
-        return $len;
+        return $res;
     }
 
     public function validAssetId($assetId)
@@ -115,24 +120,28 @@ class Util
     {
 
     }
-
+    
     public static function readVarInteger($data, $offset = 0)
     {
         if (is_null($data)) {
             throw new InvalidArgumentException('Value can not be < NULL.', 10);
         }
-        $buffer = Buffer::hex($data);
+        $buffer = Buffer::hex(substr($data,$offset * 2));
+        echo $buffer->getHex().PHP_EOL;
         if ($buffer->getSize() < 1 + $offset) {
             return [null, $offset + 1];
         }
+
+        $firstByte = $buffer->slice(0,1)->getBinary();
+        echo 'FIRST BYTE'.$buffer->slice(0,1)->getHex();
         if ($firstByte < 0xfd) {
-            return [$firstByte, $offset + 1];
+            return [$buffer->slice(0,1)->getInt(), $offset + 1];
         } elseif ($firstByte == 0xfd) {
-            return [substr($byte, 1, 2), $offset + 3];
+            return [$buffer->slice(1,4)->getInt(), $offset + 3];
         } elseif ($firstByte == 0xfe) {
-            return [substr($byte, 1, 4), $offset + 5];
+            return [$buffer->slice(1,8)->getInt(), $offset + 5];
         } elseif ($firstByte == 0xff) {
-            return [substr($byte, 1, 4), $offset + 9];
+            return [$buffer->slice(1,16)->getInt(), $offset + 9];
         } else {
             throw new InvalidArgumentException('Var Integer MaxSize Exceeded', 10);
         }
@@ -145,5 +154,28 @@ class Util
 
     public function calcVarIntegerVal()
     {
+        //ToDo:: might be unnecesarry
+    }
+
+    public static function scriptToAddress($script)
+    {
+        $classifier = new OutputClassifier();
+        $type = $classifier->classify($script);
+        if ($type == OutputClassifier::MULTISIG) {
+            $multiSig = new Multisig($script);
+            $res = [];
+            foreach($multiSig->getKeys() as $key) {
+                $res[] = $key->getAddress()->getAddress();
+            }
+            return $res;
+        } elseif ($type == OutputClassifier::PAYTOPUBKEY) {
+            $pubkey = new PayToPubkey($script);
+            return $pubkey[0]->getAddress();
+        } elseif ($type == OutputClassifier::PAYTOSCRIPTHASH) {
+            $script = AddressFactory::fromScript($script);
+            return $script->getAddress();
+        } elseif ($type == OutputClassifier::PAYTOPUBKEYHASH) {
+            return AddressFactory::fromOutputScript($script)->getAddress();
+        } 
     }
 }
