@@ -15,6 +15,7 @@ use BitWasp\Bitcoin\Script\ScriptInfo\PayToPubkeyHash;
 use BitWasp\Bitcoin\Script\Factory\P2shScriptFactory;
 use BitWasp\Bitcoin\Script\P2shScript;
 use BitWasp\Bitcoin\Key\PublicKeyFactory;
+use BitWasp\Bitcoin\Crypto\EcAdapter\Impl\PhpEcc\Key\PublicKey;
 
 class Util 
 {   
@@ -41,7 +42,7 @@ class Util
         return Base58::encode(Buffer::hex($namedAddr.$oaChecksum->getHex()));
     }
 
-    public static function OaAddressToBtcAddress($oaAddress)
+    public static function oaAddressToBtcAddress($oaAddress)
     {
         $oaHex = Base58::decode($oaAddress);
         $btcAddr = substr($oaHex->getHex(), 2, -8);
@@ -57,9 +58,9 @@ class Util
         return Base58::encode(Buffer::hex($scriptHex.$checksum)); # add checksum & encode
     }
 
-    public static function generateAssetId($pubkey)
+    public static function generateAssetId(PublicKey $pubkey)
     {
-        $pubkeyHash = Hash::sha256ripe160(Buffer::hex($pubkey))->getHex();
+        $pubkeyHash = Hash::sha256ripe160($pubkey->getBuffer())->getHex();
         return self::pubkeyHashToAssetId($pubkeyHash);
     }
     
@@ -127,13 +128,11 @@ class Util
             throw new InvalidArgumentException('Value can not be < NULL.', 10);
         }
         $buffer = Buffer::hex(substr($data,$offset * 2));
-        echo $buffer->getHex().PHP_EOL;
         if ($buffer->getSize() < 1 + $offset) {
             return [null, $offset + 1];
         }
 
         $firstByte = $buffer->slice(0,1)->getBinary();
-        echo 'FIRST BYTE'.$buffer->slice(0,1)->getHex();
         if ($firstByte < 0xfd) {
             return [$buffer->slice(0,1)->getInt(), $offset + 1];
         } elseif ($firstByte == 0xfd) {
@@ -145,16 +144,6 @@ class Util
         } else {
             throw new InvalidArgumentException('Var Integer MaxSize Exceeded', 10);
         }
-    }
-
-    public function readLeb128()
-    {
-        //ToDo::
-    }
-
-    public function calcVarIntegerVal()
-    {
-        //ToDo:: might be unnecesarry
     }
 
     public static function scriptToAddress($script)
@@ -177,5 +166,19 @@ class Util
         } elseif ($type == OutputClassifier::PAYTOPUBKEYHASH) {
             return AddressFactory::fromOutputScript($script)->getAddress();
         } 
+    }
+
+    public static function arrayFlatten(array $arr) 
+    {
+        $ret = array();
+        foreach ($arr as $item) {
+            if (is_array($item)) {
+                $ret = array_merge($ret, array_flatten($item));
+            } else {
+                $ret[] = $item;
+            }
+        }
+
+        return $ret;
     }
 }

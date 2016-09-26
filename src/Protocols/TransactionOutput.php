@@ -5,6 +5,7 @@ namespace OKohei\OpenAssets\Protocols;
 use OKohei\OpenAssets\Protocols\OutputType;
 use OKohei\OpenAssets\Protocols\MarkerOutput;
 use OKohei\OpenAssets\Util;
+use BitWasp\Bitcoin\Script\Script;
 use BitWasp\Bitcoin\Amount;
 use BitWasp\Bitcoin\Script\Classifier\OutputClassifier;
 use BitWasp\Bitcoin\Script\ScriptInfo\Multisig;
@@ -23,7 +24,7 @@ class TransactionOutput
     public $assetDefinitionUrl;
     public $assetDefinition;
     
-    public function __construct($value, $script, $assetId = null, $assetQuantity = 0, $outputType = OutputType::UNCOLORED, $metadata = null)
+    public function __construct($value, Script $script, $assetId = null, $assetQuantity = 0, $outputType = OutputType::UNCOLORED, $metadata = null)
     {
         if (!OutputType::isLabel($outputType)) {
             throw new Exception ('invalid output type');
@@ -58,6 +59,26 @@ class TransactionOutput
     public function getProofOfAuthenticity()
     {
         return $this->validAssetDefinition() ? $this->assetDefinition->proofOfAuthenticity : false;
+    }
+
+    public function getAssetId()
+    {
+        return $this->assetId;
+    }
+    
+    public function getScript()
+    {
+        return $this->script;
+    }
+    
+    public function getAssetQuantity()
+    {
+        return $this->assetQuantity;
+    }
+    
+    public function getValue()
+    {
+        return $this->value;
     }
 
     public function toHash()

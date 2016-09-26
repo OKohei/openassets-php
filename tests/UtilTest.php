@@ -6,15 +6,11 @@ use OKohei\OpenAssets\Protocols\ColoringEngine;
 use BitWasp\Bitcoin\Bitcoin;
 use BitWasp\Bitcoin\Network\NetworkFactory;
 use BitWasp\Bitcoin\Address\AddressFactory;
+use BitWasp\Bitcoin\Key\PublicKeyFactory;
+use BitWasp\Bitcoin\Script\ScriptFactory;
 
 class UtilTest extends \PHPUnit_Framework_TestCase
 {
-    public function __construct()
-    {
-        $testnet = NetworkFactory::bitcoinTestnet();
-        Bitcoin::setNetwork($testnet);
-    }
-
     public function testToOaAddress()
     {
         $oaAddress =  Util::toOaAddress('1F2AQr6oqNtcJQ6p9SiCLQTrHuM9en44H8');
@@ -23,12 +19,14 @@ class UtilTest extends \PHPUnit_Framework_TestCase
     
     public function testOaAddressToBtcAddress()
     {
-        $oaAddress =  Util::OaAddressToBtcAddress('akQz3f1v9JrnJAeGBC4pNzGNRdWXKan4U6E');
+        $oaAddress =  Util::oaAddressToBtcAddress('akQz3f1v9JrnJAeGBC4pNzGNRdWXKan4U6E');
         $this->assertEquals($oaAddress, '1F2AQr6oqNtcJQ6p9SiCLQTrHuM9en44H8');
     }
     
     public function testPubkeyHashToAssetId()
     {
+        $testnet = NetworkFactory::bitcoinTestnet();
+        Bitcoin::setNetwork($testnet);
         $assetId =  Util::pubkeyHashToAssetId('081522820f2ccef873e47ee62b31cb9e9267e725');
         $this->assertEquals($assetId, 'oWLkUn44E45cnQtsP6x1wrvJ2iRx9XyFny');
     }
@@ -37,7 +35,8 @@ class UtilTest extends \PHPUnit_Framework_TestCase
     {
         $mainnet = NetworkFactory::bitcoin();
         Bitcoin::setNetwork($mainnet);
-        $assetId =  Util::generateAssetId('0450863ad64a87ae8a2fe83c1af1a8403cb53f53e486d8511dad8a04887e5b23522cd470243453a299fa9e77237716103abc11a1df38855ed6f2ee187e9c582ba6');
+        $pubkey = PublicKeyFactory::fromHex('0450863ad64a87ae8a2fe83c1af1a8403cb53f53e486d8511dad8a04887e5b23522cd470243453a299fa9e77237716103abc11a1df38855ed6f2ee187e9c582ba6');
+        $assetId =  Util::generateAssetId($pubkey);
         $this->assertEquals($assetId, 'ALn3aK1fSuG27N96UGYB1kUYUpGKRhBuBC');
     }
     

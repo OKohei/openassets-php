@@ -4,20 +4,20 @@ namespace OKohei\OpenAssets\Transactions;
 
 class TransferParameters 
 {
-    private $unspentOutputs;
-    private $amount;
-    private $changeScript;
-    private $toScript;
-    private $outputQty;
+    public $unspentOutputs;
+    public $amount;
+    public $changeScript;
+    public $toScript;
+    public $outputQty;
 
      /**
      * TransferParameters constructor.
-     * @param SpendableOutput $unspentOutputs
+     * @param array SpendableOutput $unspentOutputs
      * @param string $toScript
      * @param string $changeScript
      * @param int $amount
      */
-    public function TransferParameters($unspentOutputs, $toScript, $changeScript, $amount, $outputQty = 1)
+    public function __construct($unspentOutputs, $toScript, $changeScript, $amount, $outputQty = 1)
     {
         $this->unspentOutputs = $unspentOutputs;
         $this->toScript = $toScript;
@@ -32,12 +32,12 @@ class TransferParameters
      */
     public function splitOutputAmount()
     {
-        $splitAmounts = []
-        for ($i = 0; $i <= $outputQty; $i++)
-          if ($i == $outputQty - 1) {
-            $value = $this->amount / $outputQty + $this->amount % $outputQty;
+        $splitAmounts = [];
+        for ($i = 0; $i <= $this->outputQty -1 ; $i++) {
+          if ($i == $this->outputQty - 1) {
+            $value = $this->amount / $this->outputQty + $this->amount % $this->outputQty;
           } else {
-            $value = $amount / $outputQty;
+            $value = $this->amount / $this->outputQty;
           }
           $splitAmounts[] = $value;
         }
