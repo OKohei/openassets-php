@@ -319,25 +319,5 @@ class TransactionBuilder
         $tx = $tx->outputs($outputs);
         return $tx->get();
     }
-
-    public static function testBitwasp($tx)
-    {
-        $ec = Bitcoin::getEcAdapter();
-        $key = PrivateKeyFactory::fromWif('cVxfm7SsbtAGcL5zhP6aJVbRBVJLiCS2i4EGnL64AJSm7HervuyN');
-        $outpoint = new WaspOutPoint(Buffer::hex($tx), 0);
-        $scriptPubKey = ScriptFactory::scriptPubKey()->payToPubKeyHash($key->getPublicKey());
-        $value = 10000;
-        $txOut = new TransactionOutput($value, $scriptPubKey);
-        $tx = TransactionFactory::build();
-        $tx = $tx->spendOutPoint($outpoint);
-        $tx = $tx->spendOutPoint($outpoint);
-        $tx = $tx->payToAddress($value, AddressFactory::fromKey($key));
-        $tx = $tx->payToAddress($value, AddressFactory::fromKey($key));
-        $tx = $tx->get();
-        return $tx;
-        $signed = new Signer($tx, $ec);
-        $signed->sign(0, $key, $txOut);
-        return $signed->get()->getHex();
-    }
 }
 
