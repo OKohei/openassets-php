@@ -117,9 +117,16 @@ class Util
         //ToDo::
     }
 
-    public function oaAddressToAssetId($oaAddress)
+    public static function oaAddressToAssetId($oaAddress)
     {
-
+        $btcAddress = self::oaAddressToBtcAddress($oaAddress);
+        return self::btcAddressToAssetId($btcAddress);
+    }
+    
+    public static function btcAddressToAssetId($btcAddress)
+    {
+        $pubkeyHash = AddressFactory::fromString($btcAddress)->getHash();
+        return self::pubkeyHashToAssetId($pubkeyHash->getHex());
     }
     
     public static function readVarInteger($data, $offset = 0)

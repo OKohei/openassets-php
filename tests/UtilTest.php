@@ -59,6 +59,18 @@ class UtilTest extends \PHPUnit_Framework_TestCase
 
     public function testOaAddressToAssetId()
     {
+        $testnet = NetworkFactory::bitcoinTestnet();
+        Bitcoin::setNetwork($testnet);
+        $oaAddress = 'bWuwzLqoQYkf2mv4UcTpruEqjYeV7VNMXvj';
+        $assetId = Util::oaAddressToAssetId($oaAddress);
+        $this->assertEquals('oa1gTDGG7tRevJVgfQ8zCzDq2Nxy7cLt1V', $assetId);
+    }
+    
+    public function testBtcAddressToAssetId()
+    {
+        $btcAddress = 'mjz76fz55GmLufu7ZqigFNwAD3JwZ6m9db';
+        $assetId = Util::btcAddressToAssetId($btcAddress);
+        $this->assertEquals('oa1gTDGG7tRevJVgfQ8zCzDq2Nxy7cLt1V', $assetId);
     }
 
     public function testReadVarInteger()
