@@ -16,6 +16,7 @@ use BitWasp\Bitcoin\Script\Factory\P2shScriptFactory;
 use BitWasp\Bitcoin\Script\P2shScript;
 use BitWasp\Bitcoin\Key\PublicKeyFactory;
 use BitWasp\Bitcoin\Crypto\EcAdapter\Impl\PhpEcc\Key\PublicKey;
+use BitWasp\Bitcoin\Address\PayToPubKeyHashAddress;
 
 class Util 
 {   
@@ -104,17 +105,17 @@ class Util
         return $res;
     }
 
-    public function validAssetId($assetId)
+   public static function validAssetId($assetId)
     {
         if (is_null($assetId) || strlen($assetId) != 34) {
             return false;
         }
-
         $decoded = Base58::decode($assetId);
-        if (dechex(substr($decoded,0,2)) != self::getOaVersionByte()) {
+        if ($decoded->slice(0, 1)->getInt() != self::getOaVersionByte()) {
             return false;
         }
-        //ToDo::
+        $p2pkH = new PayToPubKeyHashAddress($decoded->slice(1));
+        return AddressFactory::isValidAddress($p2pkH->getAddress());
     }
 
     public static function oaAddressToAssetId($oaAddress)

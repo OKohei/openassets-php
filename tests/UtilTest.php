@@ -47,6 +47,15 @@ class UtilTest extends \PHPUnit_Framework_TestCase
         $leb128 = Util::encodeLeb128(300);
     }
     
+    public function testvalidAssetId()
+    {
+        $this->assertTrue(Util::validAssetId('ALn3aK1fSuG27N96UGYB1kUYUpGKRhBuBC'));
+        $this->assertFalse(Util::validAssetId(''));
+        $this->assertFalse(Util::validAssetId(null));
+        $this->assertFalse(Util::validAssetId('oLn3aK1fSuG27N96UGYB1kUYUpGKRhBuBC'));
+        $this->assertFalse(Util::validAssetId('ALn3aK1fSuG27N96UGYB1kUYUpGKRhBuBC3'));
+    }
+    
     public function testDecodeLeb128()
     {
         //$res = Util::decodeLeb128('e58e26');

@@ -42,12 +42,18 @@ class TransactionOutput
         $this->getLoadAssetDefinitionUrl();
     }
 
+    /**
+     * @return asset amount based on divisibility 
+     */
     public function getAssetAmount()
     {
         $divisibility = $this->getDivisibility();
         return $divisibility > 0 ? ($this->assetQuantity / (10 ** $divisibility)) : $this->assetQuantity;
     }
     
+    /**
+     * @return divisibility 
+     */
     public function getDivisibility()
     {
         if (!$this->validAssetDefinition() || is_null($this->assetDefinition->divisibility)) {
@@ -56,31 +62,49 @@ class TransactionOutput
         return $this->assetDefinition->divisibility;
     }
     
+    /**
+     * @return proof of Authenticity 
+     */
     public function getProofOfAuthenticity()
     {
         return $this->validAssetDefinition() ? $this->assetDefinition->proofOfAuthenticity : false;
     }
 
+    /**
+     * @return asset id 
+     */
     public function getAssetId()
     {
         return $this->assetId;
     }
     
+    /**
+     * @return script 
+     */
     public function getScript()
     {
         return $this->script;
     }
     
+    /**
+     * @return assetquantity 
+     */
     public function getAssetQuantity()
     {
         return $this->assetQuantity;
     }
     
+    /**
+     * @return asset value 
+     */
     public function getValue()
     {
         return $this->value;
     }
 
+    /**
+     * @return array of transactionoutput 
+     */
     public function toHash()
     {
         $amount = new Amount();
@@ -99,6 +123,9 @@ class TransactionOutput
         ];
     }
 
+    /**
+     * @return btc address 
+     */
     public function getAddress()
     {
         $classifier = new OutputClassifier();
@@ -113,6 +140,9 @@ class TransactionOutput
         return Util::scriptToAddress($this->script);
     }
 
+    /**
+     * @return open assets address 
+     */
     public function getOaAddress()
     {
         $oaAddress = $this->getAddress();
@@ -130,6 +160,10 @@ class TransactionOutput
         return Util::toOaAddress($oaAddress);
     }
 
+    /**
+     * Load metadata if data exists
+     * @return  asset definition url
+     */
     public function getLoadAssetDefinitionUrl()
     {
         $this->assetDefinitionUrl = null;
@@ -151,6 +185,9 @@ class TransactionOutput
         return $this->assetDefinitionUrl;
     }
 
+    /**
+     * @return meta data url 
+     */
     public function getMetadataUrl()
     {
         if ($this->metadata) {
@@ -159,6 +196,10 @@ class TransactionOutput
         return null;
     }
 
+    /**
+     * valudate asset definition 
+     * @return boolean
+     */
     public function validAssetDefinition()
     {
         if (is_null($this->assetDefinition)){
@@ -167,6 +208,9 @@ class TransactionOutput
         return $this->assetDefinition->hasAssetId($this->assetId);
     }
 
+    /**
+     * load asset definition 
+     */
     public function loadAssetDefinition($url)
     {
         $loader = new AssetDefinitionLoader($this->getMetadataUrl());
