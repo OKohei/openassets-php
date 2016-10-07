@@ -10,12 +10,36 @@ use BitWasp\Bitcoin\Transaction\OutPoint as WaspOutPoint;
 
 class SpendableOutput 
 {   
+    /**
+     * @var OutPoint
+     */
     public $outPoint;
+    
+    /**
+     * @var TransactionOutput
+     */
     public $output;
+    
+    /**
+     * @var Integer 
+     */
     public $confirmations;
+    
+    /**
+     * @var String 
+     */
     public $spendable;
+    
+    /**
+     * @var String 
+     */
     public $solvable;
 
+    /**
+     * @param OutPoint $outPoint
+     * @param TransactionOutput $output
+     * @return SpendableOutput
+     */
     public function __construct(OutPoint $outPoint, TransactionOutput $output)
     {
         $this->outPoint = $outPoint;
@@ -25,21 +49,33 @@ class SpendableOutput
         $this->solvable = null;
     }
 
+    /**
+     * @return OutPoint
+     */
     public function outPoint()
     {
         return $this->outPoint;
     }
     
+    /**
+     * @return WaspOutPoint
+     */
     public function getWaspOutPoint()
     {
         return new WaspOutPoint(Buffer::hex($this->outPoint->hash), $this->outPoint->index);
     }
 
+    /**
+     * @return Transactionoutput
+     */
     public function output()
     {
         return $this->output;
     }
 
+    /**
+     * @return array 
+     */
     public function toHash()
     {
         if ($this->outPoint == null) {
@@ -59,6 +95,9 @@ class SpendableOutput
         return array_merge($this->output->toHash(), $hash);
     }
 
+    /**
+     * @return String 
+     */
     public function getTxId()
     {
         return ScriptFactory::create(Buffer::hex($this->outPoint->hash))->getScript();

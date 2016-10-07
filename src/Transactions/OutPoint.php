@@ -7,9 +7,20 @@ use Exception;
 
 class OutPoint
 {
+    /**
+     * @var string 
+     */
     public $hash;
+    /**
+     * @var integer 
+     */
     public $index;
     
+    /**
+     * @param String $hash
+     * @param Integer $index 
+     * @param OutPoint|Exception
+     */
     public function __construct($hash, $index)
     {
         $buffer = Buffer::hex($hash);

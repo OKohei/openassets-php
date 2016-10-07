@@ -20,18 +20,31 @@ use Exception;
 
 class TransactionBuilder
 {
+    /**
+     * @var integer 
+     */
     public $amount;
+
+    /**
+     * @var integer
+     */
     public $efr; //an estimated transaction fee rate (satoshis/KB).
 
+    /**
+     * @param Math $math
+     * @param Opcodes $opcodes
+     * @param BufferInterface|null $buffer
+     */
     public function __construct($amount = 600, $efr = 10000)
     {
         $this->amount = $amount;
     }
+
      /**
      * Creates a transaction for issuing an asset.
-     * @param [TransferParameters] issue_spec The parameters of the issuance.
-     * @param [bytes] metadata The metadata to be embedded in the transaction.
-     * @param [Integer] fees The fees to include in the transaction.
+     * @param TransferParameters $issueSpec The parameters of the issuance.
+     * @param $metadata The metadata to be embedded in the transaction.
+     * @param Integer fees The fees to include in the transaction in Satoshi.
      */
     public function issueAsset(TransferParameters $issueSpec, $metadata, $fees = null)
     {
