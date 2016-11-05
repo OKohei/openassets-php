@@ -22,7 +22,6 @@
   },
   "require": {
     "php": ">=5.6",
-    "bitwasp/bitcoin": "dev-master",
     "guzzlehttp/guzzle": "~6.0",
     "thefox/utilities": "~1.10",
     "aws/aws-sdk-php": "3.*",
