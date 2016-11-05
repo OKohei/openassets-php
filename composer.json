@@ -28,6 +28,11 @@
     "aws/aws-sdk-php": "3.*",
     "bitwasp/bitcoin": "dev-master"
   },
+  "repositories": [
+  {
+      "type": "git",
+      "url": "https://github.com/OKohei/bitcoin-php"
+  }],
   "require-dev": {
     "phpunit/phpunit": "5.5.4"
   }
