@@ -271,40 +271,43 @@ class TransactionBuilderTest extends \PHPUnit_Framework_TestCase
         return $results;
     }
 
-//    public function testGenerateTransactionSigned()
-//    {
-//        $amount = new Amount();
-//        $ec = Bitcoin::getEcAdapter();
-//        $testnet = NetworkFactory::bitcoinTestnet();
-//        Bitcoin::setNetwork($testnet);
-//        $this->generateNewAddress();
-//        $key = PrivateKeyFactory::fromWif('93G5SGnDkv7KxJv57UomznoFtjDwYrhy7a7QqSQq2S8uY36GWy4');
-//        $btcAddress = $key->getAddress()->getAddress();
-//        $scriptPubKey = ScriptFactory::scriptPubKey()->payToPubKeyHash($key->getPublicKey());
-//        $oaAddress = Util::toOaAddress($btcAddress);
-//        $satoshi = $amount->toSatoshis(0.001);
-//        $outPoint = new OutPoint('2177e661be02e202b0b707d222f5009fae65019ececcc01ef82a1e71841e076a', 1);
-//        $txOut = new TransactionOutput($satoshi, ScriptFactory::fromHex('76a914fe3350b459c5b9d7e5d51f4e5670e2fda672049688ac'), null, 0);
-//        $spendableOutput = new SpendableOutput($outPoint, $txOut);
-//        
-//        $builder = new TransactionBuilder($amount->toSatoshis(0.0003));
-//        $spec = new TransferParameters([$spendableOutput], $oaAddress, $oaAddress, 10);
-//        $metadata = null;//$this->generateAssetUrl(Util::generateAssetId($key->getPublicKey()));
-//        $tx = $builder->issueAsset($spec, $metadata, 20000);
-//
-//        $signed = new Signer($tx, $ec);
-//        $signed->sign(0, $key, new WaspTransactionOutput($satoshi, $scriptPubKey));
-//        echo $signed->get()->getHex().PHP_EOL;
-//    }
-//
-//    private function generateNewAddress()
-//    {
-//        $key = PrivateKeyFactory::create();
-//        echo $key->toWif().PHP_EOL;
-//        echo $key->getAddress()->getAddress().PHP_EOL;
-//        echo UtiL::toOaAddress($key->getAddress()->getAddress()).PHP_EOL;
-//        echo UtiL::generateAssetId($key->getPublicKey()).PHP_EOL;
-//    }
+    public function testGenerateTransactionSigned()
+    {
+        $amount = new Amount();
+        $ec = Bitcoin::getEcAdapter();
+        $testnet = NetworkFactory::bitcoinTestnet();
+        Bitcoin::setNetwork($testnet);
+        $this->generateNewAddress();
+        $key = PrivateKeyFactory::fromWif('93G5SGnDkv7KxJv57UomznoFtjDwYrhy7a7QqSQq2S8uY36GWy4');
+        $btcAddress = $key->getAddress()->getAddress();
+        $scriptPubKey = ScriptFactory::scriptPubKey()->payToPubKeyHash($key->getPublicKey());
+        $oaAddress = Util::toOaAddress($btcAddress);
+        $satoshi = $amount->toSatoshis(0.001);
+        $outPoint = new OutPoint('2177e661be02e202b0b707d222f5009fae65019ececcc01ef82a1e71841e076a', 1);
+        $txOut = new TransactionOutput($satoshi, ScriptFactory::fromHex('76a914fe3350b459c5b9d7e5d51f4e5670e2fda672049688ac'), null, 0);
+        $spendableOutput = new SpendableOutput($outPoint, $txOut);
+        
+        $builder = new TransactionBuilder($amount->toSatoshis(0.0003));
+        $spec = new TransferParameters([$spendableOutput], $oaAddress, $oaAddress, 10);
+        $metadata = 'https://goo.gl/eYWLnY';//$this->generateAssetUrl(Util::generateAssetId($key->getPublicKey()));
+        $tx = $builder->issueAsset($spec, $metadata, 20000);
+
+        $signed = new Signer($tx, $ec);
+        $signed->sign(0, $key, new WaspTransactionOutput($satoshi, $scriptPubKey));
+        echo $signed->get()->getHex().PHP_EOL;
+        $amount = new Amount();
+        echo $amount->toBtc($signed->get()->getBuffer()->getSize() * 160);
+        //echo $signed->get()->get().PHP_EOL;
+    }
+
+    private function generateNewAddress()
+    {
+        $key = PrivateKeyFactory::create();
+        //echo $key->toWif().PHP_EOL;
+        //echo $key->getAddress()->getAddress().PHP_EOL;
+        //echo UtiL::toOaAddress($key->getAddress()->getAddress()).PHP_EOL;
+        //echo UtiL::generateAssetId($key->getPublicKey()).PHP_EOL;
+    }
 //
 //    private function generateAssetUrl($assetId)
 //    {
