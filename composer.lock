@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "062ffe175abec553d158f71e5a152294",
-    "content-hash": "3ecb5fb9f4da800c00c9b9e282b7825a",
+    "hash": "c18b456eabb860bc5ec62024c888a53c",
+    "content-hash": "d25a8986e4e5eb75c45a3f47b913a933",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -92,8 +92,14 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/OKohei/bitcoin-php",
-                "reference": "e0c6c73c13cdffb07c43fa39b39db88cc1fc0de9"
+                "url": "https://github.com/Bit-Wasp/bitcoin-php.git",
+                "reference": "ec59ac5778c4f5e6c7f0707c698009ba28af2ebc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Bit-Wasp/bitcoin-php/zipball/ec59ac5778c4f5e6c7f0707c698009ba28af2ebc",
+                "reference": "ec59ac5778c4f5e6c7f0707c698009ba28af2ebc",
+                "shasum": ""
             },
             "require": {
                 "bitwasp/buffertools": "^0.4.0",
@@ -108,7 +114,7 @@
                 "php-64bit": ">=5.6",
                 "pleonasm/merkle-tree": "1.0.0",
                 "rgooding/protobuf-php": "v0.0.1",
-                "symfony/http-foundation": "3.1.*"
+                "symfony/http-foundation": "^2.7|^3.0"
             },
             "require-dev": {
                 "ext-json": "*",
@@ -124,11 +130,7 @@
                     "src/Script/functions.php"
                 ]
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "BitWasp\\Bitcoin\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "Unlicense"
             ],
@@ -141,7 +143,7 @@
             ],
             "description": "PHP Bitcoin library with functions for transactions, signatures, serialization, Random/Deterministic ECDSA keys, blocks, RPC bindings",
             "homepage": "https://github.com/bit-wasp/bitcoin-php",
-            "time": "2017-04-13 10:56:58"
+            "time": "2017-03-09 10:25:04"
         },
         {
             "name": "bitwasp/buffertools",
@@ -1301,16 +1303,16 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v3.1.10",
+            "version": "v3.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "cef0ad49a2e90455cfc649522025b5a2929648c0"
+                "reference": "cb0b6418f588952c9290b3df4ca650f1b7ab570a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/cef0ad49a2e90455cfc649522025b5a2929648c0",
-                "reference": "cef0ad49a2e90455cfc649522025b5a2929648c0",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/cb0b6418f588952c9290b3df4ca650f1b7ab570a",
+                "reference": "cb0b6418f588952c9290b3df4ca650f1b7ab570a",
                 "shasum": ""
             },
             "require": {
@@ -1323,7 +1325,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.1-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -1350,7 +1352,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
-            "time": "2017-01-08 20:43:43"
+            "time": "2017-04-04 15:30:56"
         },
         {
             "name": "symfony/polyfill-mbstring",
