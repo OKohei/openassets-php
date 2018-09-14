@@ -12,6 +12,7 @@ use BitWasp\Bitcoin\Script\ScriptFactory;
 use BitWasp\Bitcoin\Script\Script;
 use BitWasp\Bitcoin\Transaction\TransactionFactory;
 use Exception;
+use Error;
 
 class TransactionOutputTest extends \PHPUnit_Framework_TestCase
 {
@@ -32,7 +33,7 @@ class TransactionOutputTest extends \PHPUnit_Framework_TestCase
             $buffer = Buffer::hex('');
             $script = ScriptFactory::create($buffer);
             $transactionOutput = new TransactionOutput(100, $script, 'ALn3aK1fSuG27N96UGYB1kUYUpGKRhBuBC', 9223372036854775807, 10);
-        } catch (Exception $e) {
+        } catch (Error $e) {
             $this->assertTrue(true);
         }
     }
@@ -43,7 +44,7 @@ class TransactionOutputTest extends \PHPUnit_Framework_TestCase
             $buffer = Buffer::hex('');
             $script = ScriptFactory::create($buffer);
             $transactionOutput = new TransactionOutput(100, $script, 'ALn3aK1fSuG27N96UGYB1kUYUpGKRhBuBC', 9223372036854775808, 10);
-        } catch (Exception $e) {
+        } catch (Error $e) {
             $this->assertTrue(true);
         }
     }

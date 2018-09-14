@@ -16,6 +16,8 @@ use BitWasp\Bitcoin\Script\Factory\P2shScriptFactory;
 use BitWasp\Bitcoin\Script\P2shScript;
 use BitWasp\Bitcoin\Key\PublicKeyFactory;
 use BitWasp\Bitcoin\Crypto\EcAdapter\Impl\PhpEcc\Key\PublicKey;
+use BitWasp\Bitcoin\Crypto\EcAdapter\EcSerializer;
+use BitWasp\Bitcoin\Crypto\EcAdapter\Serializer\Key\PublicKeySerializerInterface;
 use BitWasp\Bitcoin\Address\PayToPubKeyHashAddress;
 
 class Util 
@@ -114,7 +116,7 @@ class Util
         if ($decoded->slice(0, 1)->getInt() != self::getOaVersionByte()) {
             return false;
         }
-        $p2pkH = new PayToPubKeyHashAddress($decoded->slice(1));
+        $p2pkH = new PayToPubKeyHashAddress($decoded->slice(1, 20));
         return AddressFactory::isValidAddress($p2pkH->getAddress());
     }
 
@@ -160,8 +162,10 @@ class Util
         $type = $classifier->classify($script);
         if ($type == OutputClassifier::MULTISIG) {
             $multiSig = new Multisig($script);
+            $pubKeySerializer = EcSerializer::getSerializer(PublicKeySerializerInterface::class, true, Bitcoin::getEcAdapter());
             $res = [];
-            foreach($multiSig->getKeys() as $key) {
+            foreach($multiSig->getKeyBuffers() as $buffer) {
+                $key = $pubKeySerializer->parse($buffer);
                 $res[] = $key->getAddress()->getAddress();
             }
             return $res;

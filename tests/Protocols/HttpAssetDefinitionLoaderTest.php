@@ -19,7 +19,7 @@ class HttpAssetDefinitionLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $loader = new HttpAssetDefinitionLoader('http://goo.gl/fS4mEj');
         $assetDefinition = $loader->load();
-        $this->assertEquals(3, count($assetDefinition->assetIds));
+        $this->assertEquals(4, count($assetDefinition->assetIds));
         $this->assertEquals('AGHhobo7pVQN5fZWqv3rhdc324ryT7qVTB', $assetDefinition->assetIds[0]);
         $this->assertEquals('HAWSCoin', $assetDefinition->nameShort);
         $this->assertEquals('MHAWS Coin', $assetDefinition->name);

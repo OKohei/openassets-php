@@ -5,10 +5,13 @@ namespace OKohei\OpenAssets\Protocols;
 use OKohei\OpenAssets\Protocols\OutputType;
 use OKohei\OpenAssets\Protocols\MarkerOutput;
 use OKohei\OpenAssets\Util;
+use BitWasp\Bitcoin\Bitcoin;
 use BitWasp\Bitcoin\Script\Script;
 use BitWasp\Bitcoin\Amount;
 use BitWasp\Bitcoin\Script\Classifier\OutputClassifier;
 use BitWasp\Bitcoin\Script\ScriptInfo\Multisig;
+use BitWasp\Bitcoin\Crypto\EcAdapter\EcSerializer;
+use BitWasp\Bitcoin\Crypto\EcAdapter\Serializer\Key\PublicKeySerializerInterface;
 use Exception;
 
 class TransactionOutput
@@ -131,7 +134,9 @@ class TransactionOutput
         $classifier = new OutputClassifier();
         if ($classifier->isMultisig($this->script)) {
             $handler = new Multisig($this->script);
-            foreach ($handler->getKeys() as $address) {
+            $pubKeySerializer = EcSerializer::getSerializer(PublicKeySerializerInterface::class, true, Bitcoin::getEcAdapter());
+            foreach ($handler->getKeyBuffers() as $buffer) {
+                $address = $pubKeySerializer->parse($buffer);
                 if ($address == null) {
                     return null;
                 }
