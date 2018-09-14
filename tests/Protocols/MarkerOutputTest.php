@@ -5,7 +5,6 @@ use OKohei\OpenAssets\Protocols\MarkerOutput;
 use BitWasp\Bitcoin\Bitcoin;
 use BitWasp\Buffertools\Buffer;
 use BitWasp\Bitcoin\Network\NetworkFactory;
-use BitWasp\Bitcoin\Address\AddressFactory;
 
 class MarkerOutputTest extends \PHPUnit_Framework_TestCase
 {

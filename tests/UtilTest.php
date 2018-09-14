@@ -5,7 +5,6 @@ use OKohei\OpenAssets\Util;
 use OKohei\OpenAssets\Protocols\ColoringEngine;
 use BitWasp\Bitcoin\Bitcoin;
 use BitWasp\Bitcoin\Network\NetworkFactory;
-use BitWasp\Bitcoin\Address\AddressFactory;
 use BitWasp\Bitcoin\Key\PublicKeyFactory;
 use BitWasp\Bitcoin\Script\ScriptFactory;
 

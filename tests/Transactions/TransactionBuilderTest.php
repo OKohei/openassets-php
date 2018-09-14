@@ -21,6 +21,7 @@ use BitWasp\Bitcoin\Transaction\TransactionOutput as WaspTransactionOutput;
 use BitWasp\Bitcoin\Transaction\Factory\Signer;
 use BitWasp\Bitcoin\Transaction\TransactionFactory;
 use BitWasp\Bitcoin\Key\PrivateKeyFactory;
+use BitWasp\Bitcoin\Address\PayToPubKeyHashAddress;
 
 use Exception;
 
@@ -279,7 +280,7 @@ class TransactionBuilderTest extends \PHPUnit_Framework_TestCase
         Bitcoin::setNetwork($testnet);
         $this->generateNewAddress();
         $key = PrivateKeyFactory::fromWif('93G5SGnDkv7KxJv57UomznoFtjDwYrhy7a7QqSQq2S8uY36GWy4');
-        $btcAddress = $key->getAddress()->getAddress();
+        $btcAddress = (new PayToPubKeyHashAddress($key->getPubKeyHash()))->getAddress();
         $scriptPubKey = ScriptFactory::scriptPubKey()->payToPubKeyHash($key->getPubKeyHash());
         $oaAddress = Util::toOaAddress($btcAddress);
         $satoshi = $amount->toSatoshis(0.001);

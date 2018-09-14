@@ -7,7 +7,6 @@ use OKohei\OpenAssets\Protocols\OutputType;
 use BitWasp\Bitcoin\Bitcoin;
 use BitWasp\Buffertools\Buffer;
 use BitWasp\Bitcoin\Network\NetworkFactory;
-use BitWasp\Bitcoin\Address\AddressFactory;
 use BitWasp\Bitcoin\Script\ScriptFactory;
 use BitWasp\Bitcoin\Script\Script;
 use BitWasp\Bitcoin\Transaction\TransactionFactory;

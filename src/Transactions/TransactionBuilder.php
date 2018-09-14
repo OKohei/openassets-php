@@ -11,7 +11,7 @@ use BitWasp\Bitcoin\Key\PrivateKeyFactory;
 use BitWasp\Bitcoin\Bitcoin;
 use BitWasp\Bitcoin\Transaction\OutPoint as WaspOutPoint;
 use BitWasp\Bitcoin\Transaction\TransactionInput;
-use BitWasp\Bitcoin\Address\AddressFactory;
+use BitWasp\Bitcoin\Address\AddressCreator;
 use BitWasp\Bitcoin\Transaction\Factory\Signer;
 use BitWasp\Buffertools\Buffer;
 use BitWasp\Bitcoin\Transaction\TransactionFactory;
@@ -64,17 +64,21 @@ class TransactionBuilder
 
         $issueAddress  = Util::oaAddressToBtcAddress($issueSpec->toScript);
         $fromAddress  = Util::oaAddressToBtcAddress($issueSpec->changeScript);
-        if (AddressFactory::isValidAddress($issueAddress) == false || AddressFactory::isValidAddress($fromAddress) == false) {
+        $addressCreator = new AddressCreator();
+        try{
+            $addressCreator->fromString($issueAddress);
+            $addressCreator->fromString($fromAddress);
+        }catch(Exception $e) {
             return false;
         }
         $assetQuantities = [];
         foreach ($issueSpec->splitOutputAmount() as $amount) {
             $assetQuantities[] = $amount;
-            $tx = $tx->payToAddress($this->amount, AddressFactory::fromString($issueAddress)); //getcoloredoutput
+            $tx = $tx->payToAddress($this->amount, $addressCreator->fromString($issueAddress)); //getcoloredoutput
         }
 
         $tx = $tx->outputs([self::getMarkerOutput($assetQuantities, $metadata)]); //getcoloredoutput
-        $tx = $tx->payToAddress($totalAmount - $this->amount - $fees, AddressFactory::fromString($fromAddress)); //getuncoloredoutput
+        $tx = $tx->payToAddress($totalAmount - $this->amount - $fees, $addressCreator->fromString($fromAddress)); //getuncoloredoutput
         $tx = $tx->get();
         return $tx;
     }
@@ -167,8 +171,9 @@ class TransactionBuilder
     # @return [Bitcoin::Protocol::TxOut] the marker output.
     public function getColoredOutput($address)
     {
-        $address = AddressFactory::fromString($address);
-        return new TransactionOutput($this->amount, ScriptFactory::scriptPubKey()->payToAddress($address));
+        $addressCreator = new AddressCreator();
+        $address = $addressCreator->fromString($address);
+        return new TransactionOutput($this->amount, $address->getScriptPubKey());
     }
     
     # create marker output.
@@ -180,8 +185,9 @@ class TransactionBuilder
         if ($value < $this->amount) {
             throw new Exception('DustOutputError');
         }
-        $address = AddressFactory::fromString($address);
-        return new TransactionOutput($value, ScriptFactory::scriptPubKey()->payToAddress($address));
+        $addressCreator = new AddressCreator();
+        $address = $addressCreator->fromString($address);
+        return new TransactionOutput($value, $address->getScriptPubKey());
     }
 
     # Calculate a transaction fee

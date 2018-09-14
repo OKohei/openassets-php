@@ -9,7 +9,7 @@ use BitWasp\Buffertools\Buffer;
 use BitWasp\Bitcoin\Crypto\Hash;
 use BitWasp\Bitcoin\Script\Classifier\OutputClassifier;
 use BitWasp\Bitcoin\Script\ScriptInfo\PayToPubkey;
-use BitWasp\Bitcoin\Address\AddressFactory;
+use BitWasp\Bitcoin\Address\AddressCreator;
 use BitWasp\Bitcoin\Script\ScriptInfo\Multisig;
 use BitWasp\Bitcoin\Script\ScriptInfo\PayToPubkeyHash;
 use BitWasp\Bitcoin\Script\Factory\P2shScriptFactory;
@@ -18,7 +18,10 @@ use BitWasp\Bitcoin\Key\PublicKeyFactory;
 use BitWasp\Bitcoin\Crypto\EcAdapter\Impl\PhpEcc\Key\PublicKey;
 use BitWasp\Bitcoin\Crypto\EcAdapter\EcSerializer;
 use BitWasp\Bitcoin\Crypto\EcAdapter\Serializer\Key\PublicKeySerializerInterface;
+use BitWasp\Bitcoin\Address\ScriptHashAddress;
 use BitWasp\Bitcoin\Address\PayToPubKeyHashAddress;
+use BitWasp\Bitcoin\Network\NetworkFactory;
+use Exception;
 
 class Util 
 {   
@@ -29,7 +32,7 @@ class Util
     private static function getOaVersionByte() 
     {
         $network = Bitcoin::getNetwork();
-        return $network->isTestnet() ? self::OA_VERSION_BYTE_TESTNET : self::OA_VERSION_BYTE; 
+        return $network == NetworkFactory::bitcoinTestnet() ? self::OA_VERSION_BYTE_TESTNET : self::OA_VERSION_BYTE; 
     }
 
     public static function toOaAddress($btcAddress)
@@ -117,7 +120,13 @@ class Util
             return false;
         }
         $p2pkH = new PayToPubKeyHashAddress($decoded->slice(1, 20));
-        return AddressFactory::isValidAddress($p2pkH->getAddress());
+        $addressCreator = new AddressCreator();
+        try{
+            $addressCreator->fromString($p2pkH->getAddress());
+            return true;
+        }catch(Exception $e) {
+            return false;
+        }
     }
 
     public static function oaAddressToAssetId($oaAddress)
@@ -128,7 +137,8 @@ class Util
     
     public static function btcAddressToAssetId($btcAddress)
     {
-        $pubkeyHash = AddressFactory::fromString($btcAddress)->getHash();
+        $addressCreator = new AddressCreator();
+        $pubkeyHash = $addressCreator->fromString($btcAddress)->getHash();
         return self::pubkeyHashToAssetId($pubkeyHash->getHex());
     }
     
@@ -166,17 +176,18 @@ class Util
             $res = [];
             foreach($multiSig->getKeyBuffers() as $buffer) {
                 $key = $pubKeySerializer->parse($buffer);
-                $res[] = $key->getAddress()->getAddress();
+                $res[] = (new PayToPubKeyHashAddress($key->getPubKeyHash()))->getAddress();
             }
             return $res;
         } elseif ($type == OutputClassifier::PAYTOPUBKEY) {
             $pubkey = new PayToPubkey($script);
             return $pubkey[0]->getAddress();
         } elseif ($type == OutputClassifier::PAYTOSCRIPTHASH) {
-            $script = AddressFactory::fromScript($script);
+            $script = new ScriptHashAddress($script->getScriptHash());
             return $script->getAddress();
         } elseif ($type == OutputClassifier::PAYTOPUBKEYHASH) {
-            return AddressFactory::fromOutputScript($script)->getAddress();
+            $addressCreator = new AddressCreator();
+            return $addressCreator->fromOutputScript($script)->getAddress();
         } 
     }
 

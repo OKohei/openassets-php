@@ -5,7 +5,6 @@ use OKohei\OpenAssets\Protocols\AssetDefinition;
 use BitWasp\Bitcoin\Bitcoin;
 use BitWasp\Buffertools\Buffer;
 use BitWasp\Bitcoin\Network\NetworkFactory;
-use BitWasp\Bitcoin\Address\AddressFactory;
 
 class AssetDefinitionTest extends \PHPUnit_Framework_TestCase
 {
