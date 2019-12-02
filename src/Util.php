@@ -14,7 +14,6 @@ use BitWasp\Bitcoin\Script\ScriptInfo\Multisig;
 use BitWasp\Bitcoin\Script\ScriptInfo\PayToPubkeyHash;
 use BitWasp\Bitcoin\Script\Factory\P2shScriptFactory;
 use BitWasp\Bitcoin\Script\P2shScript;
-use BitWasp\Bitcoin\Key\PublicKeyFactory;
 use BitWasp\Bitcoin\Crypto\EcAdapter\Impl\PhpEcc\Key\PublicKey;
 use BitWasp\Bitcoin\Crypto\EcAdapter\EcSerializer;
 use BitWasp\Bitcoin\Crypto\EcAdapter\Serializer\Key\PublicKeySerializerInterface;
@@ -104,6 +103,7 @@ class Util
         };
         $data = explode('|', $base);
         foreach ($data as $str) {
+            $x = 0;
             $len = Leb128::udecode(pack('H*', $str), $x);
             $res[] = $x;
         }
@@ -171,7 +171,7 @@ class Util
         $classifier = new OutputClassifier();
         $type = $classifier->classify($script);
         if ($type == OutputClassifier::MULTISIG) {
-            $multiSig = new Multisig($script);
+            $multiSig = Multisig::fromScript($script);
             $pubKeySerializer = EcSerializer::getSerializer(PublicKeySerializerInterface::class, true, Bitcoin::getEcAdapter());
             $res = [];
             foreach($multiSig->getKeyBuffers() as $buffer) {
@@ -180,7 +180,7 @@ class Util
             }
             return $res;
         } elseif ($type == OutputClassifier::PAYTOPUBKEY) {
-            $pubkey = new PayToPubkey($script);
+            $pubkey = PayToPubkey::fromScript($script);
             return $pubkey[0]->getAddress();
         } elseif ($type == OutputClassifier::PAYTOSCRIPTHASH) {
             $script = new ScriptHashAddress($script->getScriptHash());

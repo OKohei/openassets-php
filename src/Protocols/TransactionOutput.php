@@ -133,7 +133,7 @@ class TransactionOutput
     {
         $classifier = new OutputClassifier();
         if ($classifier->isMultisig($this->script)) {
-            $handler = new Multisig($this->script);
+            $handler = Multisig::fromScript($this->script);
             $pubKeySerializer = EcSerializer::getSerializer(PublicKeySerializerInterface::class, true, Bitcoin::getEcAdapter());
             foreach ($handler->getKeyBuffers() as $buffer) {
                 $address = $pubKeySerializer->parse($buffer);

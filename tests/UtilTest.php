@@ -5,7 +5,7 @@ use OKohei\OpenAssets\Util;
 use OKohei\OpenAssets\Protocols\ColoringEngine;
 use BitWasp\Bitcoin\Bitcoin;
 use BitWasp\Bitcoin\Network\NetworkFactory;
-use BitWasp\Bitcoin\Key\PublicKeyFactory;
+use BitWasp\Bitcoin\Key\Factory\PublicKeyFactory;
 use BitWasp\Bitcoin\Script\ScriptFactory;
 
 class UtilTest extends \PHPUnit_Framework_TestCase
@@ -34,7 +34,8 @@ class UtilTest extends \PHPUnit_Framework_TestCase
     {
         $mainnet = NetworkFactory::bitcoin();
         Bitcoin::setNetwork($mainnet);
-        $pubkey = PublicKeyFactory::fromHex('0450863ad64a87ae8a2fe83c1af1a8403cb53f53e486d8511dad8a04887e5b23522cd470243453a299fa9e77237716103abc11a1df38855ed6f2ee187e9c582ba6');
+        $factory = new PublicKeyFactory();
+        $pubkey = $factory->fromHex('0450863ad64a87ae8a2fe83c1af1a8403cb53f53e486d8511dad8a04887e5b23522cd470243453a299fa9e77237716103abc11a1df38855ed6f2ee187e9c582ba6');
         $assetId =  Util::generateAssetId($pubkey);
         $this->assertEquals($assetId, 'ALn3aK1fSuG27N96UGYB1kUYUpGKRhBuBC');
     }

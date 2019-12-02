@@ -20,8 +20,9 @@ use BitWasp\Bitcoin\Transaction\OutPoint as WaspOutPoint;
 use BitWasp\Bitcoin\Transaction\TransactionOutput as WaspTransactionOutput;
 use BitWasp\Bitcoin\Transaction\Factory\Signer;
 use BitWasp\Bitcoin\Transaction\TransactionFactory;
-use BitWasp\Bitcoin\Key\PrivateKeyFactory;
+use BitWasp\Bitcoin\Key\Factory\PrivateKeyFactory;
 use BitWasp\Bitcoin\Address\PayToPubKeyHashAddress;
+use BitWasp\Bitcoin\Crypto\Random\Random;
 
 use Exception;
 
@@ -279,13 +280,14 @@ class TransactionBuilderTest extends \PHPUnit_Framework_TestCase
         $testnet = NetworkFactory::bitcoinTestnet();
         Bitcoin::setNetwork($testnet);
         $this->generateNewAddress();
-        $key = PrivateKeyFactory::fromWif('93G5SGnDkv7KxJv57UomznoFtjDwYrhy7a7QqSQq2S8uY36GWy4');
+        $factory = new PrivateKeyFactory();
+        $key = $factory->fromWif('93G5SGnDkv7KxJv57UomznoFtjDwYrhy7a7QqSQq2S8uY36GWy4');
         $btcAddress = (new PayToPubKeyHashAddress($key->getPubKeyHash()))->getAddress();
         $scriptPubKey = ScriptFactory::scriptPubKey()->payToPubKeyHash($key->getPubKeyHash());
         $oaAddress = Util::toOaAddress($btcAddress);
         $satoshi = $amount->toSatoshis(0.001);
         $outPoint = new OutPoint('2177e661be02e202b0b707d222f5009fae65019ececcc01ef82a1e71841e076a', 1);
-        $txOut = new TransactionOutput($satoshi, ScriptFactory::fromHex('76a914fe3350b459c5b9d7e5d51f4e5670e2fda672049688ac'), null, 0);
+        $txOut = new TransactionOutput($satoshi, ScriptFactory::fromHex(''), null, 0);
         $spendableOutput = new SpendableOutput($outPoint, $txOut);
         
         $builder = new TransactionBuilder($amount->toSatoshis(0.0003));
@@ -303,7 +305,8 @@ class TransactionBuilderTest extends \PHPUnit_Framework_TestCase
 
     private function generateNewAddress()
     {
-        $key = PrivateKeyFactory::create();
+        $factory = new PrivateKeyFactory();
+        $key = $factory->generateUncompressed(new Random());
         //echo $key->toWif().PHP_EOL;
         //echo $key->getAddress()->getAddress().PHP_EOL;
         //echo UtiL::toOaAddress($key->getAddress()->getAddress()).PHP_EOL;
