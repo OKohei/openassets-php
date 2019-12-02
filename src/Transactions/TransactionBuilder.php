@@ -7,7 +7,6 @@ use OKohei\OpenAssets\Util;
 
 use BitWasp\Bitcoin\Network\NetworkFactory;
 use BitWasp\Bitcoin\Script\ScriptFactory;
-use BitWasp\Bitcoin\Key\PrivateKeyFactory;
 use BitWasp\Bitcoin\Bitcoin;
 use BitWasp\Bitcoin\Transaction\OutPoint as WaspOutPoint;
 use BitWasp\Bitcoin\Transaction\TransactionInput;

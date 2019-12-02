@@ -55,7 +55,7 @@ class MarkerOutput
         $buffer = Buffertools::numToVarInt(strlen($this->metadata));
         $payload[] = self::getSortHex($buffer);
         $tmp = null;
-        $metaBuffer = new Buffer($this->metadata);
+        $metaBuffer = new Buffer($this->metadata ?? '');
         $payload[] = $metaBuffer->getHex();
         return implode('', $payload);
     }
